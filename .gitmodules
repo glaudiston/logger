@@ -1,0 +1,12 @@
+[submodule "bash/pragma_once"]
+	path = bash/pragma_once
+	url = git@github.com:glaudiston/pragma_once
+[submodule "bash/event-driven"]
+	path = bash/event-driven
+	url = git@github.com:glaudiston/event-driven
+[submodule "bash/termsdk"]
+	path = bash/termsdk
+	url = git@github.com:glaudiston/termsdk
+[submodule "bash/backtrace"]
+	path = bash/backtrace
+	url = git@github.com:glaudiston/backtrace
