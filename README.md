@@ -1,4 +1,3 @@
-
 # 🚀 Bash Event-Driven Logger
 
 [![Bash Shell](https://img.shields.io/badge/Shell-Bash-4EAA7B?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
@@ -26,7 +25,7 @@ This means you can simultaneously:
 
 ## ✨ Key Features
 
-- ** decouple Architecture**: Add or remove logging destinations (observers) at runtime via `subscribe`.
+- **Decoupled Architecture**: Add or remove logging destinations (observers) at runtime via `subscribe`.
 - **Automatic Backtracing**: Integrated with `backtrace.sh` to automatically dump the call stack on `error` levels.
 - **Machine-Ready**: Built-in `jq` integration for valid JSON output.
 - **TUI Ready**: Uses `termsdk` for professional ANSI terminal coloring.
@@ -34,25 +33,39 @@ This means you can simultaneously:
 
 ---
 
-## 🛠 Installation & Dependencies
+## 🛠 Installation & Setup
 
-### Prerequisites
-Ensure you have the following installed:
-- `jq` (for JSON processing)
-- `bash` (4.0+)
+Since this logger depends on several specialized Bash libraries, it uses **Git Submodules**. Follow these steps to get it running:
 
-### Dependencies
-This logger is part of an ecosystem. It requires:
-- [pragma_once](https://github.com/glaudiston/pragma_once)
-- [event-driven](https://github.com/glaudiston/event-driven)
-- [backtrace](https://github.com/glaudiston/backtrace)
-- [termsdk](https://github.com/glaudiston/termsdk)
+### 1. Clone the Repository
+To clone the project along with all its dependencies in one command, use:
+```bash
+git clone --recursive https://github.com/glaudiston/logger.git
+cd logger
+```
+
+**Already cloned the repo without `--recursive`?**  
+Run these commands to fetch the missing dependencies:
+```bash
+git submodule update --init --recursive
+```
+
+### 2. Install System Dependencies
+The logger requires `jq` for JSON processing.
+- **Ubuntu/Debian:** `sudo apt-get install jq`
+- **macOS:** `brew install jq`
+- **CentOS/RHEL:** `sudo yum install jq`
+
+### 3. Requirements
+- **Bash:** version 4.0+
+- **jq:** installed and available in your PATH
 
 ---
 
 ## 🚀 Quick Start
 
 ### Basic Usage
+Include the logger in your script and start logging:
 
 ```bash
 #!/bin/bash
