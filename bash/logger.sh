@@ -8,43 +8,51 @@
 # github.com/glaudiston/termsdk: ansi term code to TUI features like screen-buffers, cursor control, colors, etc.
 # https://github.com/jqlang/jq: jqlang allows encode/decode and query json
 
-. $(dirname $(realpath $BASH_SOURCE))/pragma_once/bash/pragma_once.sh || return 0 # if already loaded just return
+. $(dirname $(realpath $BASH_SOURCE))/pragma_once/bash/pragma_once.sh || return 0
 . $(dirname $(realpath $BASH_SOURCE))/backtrace/bash/backtrace.sh
 . $(dirname $(realpath $BASH_SOURCE))/event-driven/bash/event.sh
 . $(dirname $(realpath $BASH_SOURCE))/termsdk/ansi_term_codes.sh
 
 log_observer_json_stderr()
 {
-    shift # Remove the topic name ('LOG')
-    local IFS='	'
-    local level="${1,,}"
-    shift # Remove the level (e.g., 'info'), leaving only the message in $@
+    # The event-driven lib passes: Topic, Hash, Timestamp, Payload...
+    shift 3 # ignore topic, hash, and timestamp
     
+	declare -a payload=( ${1,,} );
+    local level=${payload[0]} # First word of payload is the level
+    
+    local msg="${payload[@]:1}"
     local TRACE=""
     [ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
     
-    echo -e "{ \"level\": \"$level\", \"data\": $(jq -Rs <<<"$*')${TRACE}"}" >&2
+    jq -cn \
+	--arg level "$level" \
+	--arg msg "$msg" \
+	'{level:$level,"data":$msg'"$TRACE"'}' >&2
 }
 
 log_observer_stderr()
 {
-    shift # Remove the topic name ('LOG')
-    local IFS='	'
-    local level=$1
-    shift # Remove the level, leaving only the message in $@
+    # The event-driven lib passes: Topic, Hash, Timestamp, Payload...
+    shift 3 # ignore topic, hash, and timestamp
     
+    local level="${1,,}"
+    shift # shift level out
+    local msg="$*"
+
     local color=""
     [ "$level" == "error" ] && color="$TERM_COLOR_RED"
-    
-    echo -e "[${color}$level${TERM_COLOR_RESET}] $@" >&2
+
+    # Output: [level] message
+    echo -e "[${color}${level^^}${TERM_COLOR_RESET}] $msg" >&2
     [ "$level" == "error" ] && backtrace >&2
 }
 
 subscribe LOG log_observer_stderr
 subscribe LOG log_observer_json_stderr
 
-debug(){ publish LOG debug "$*"; }
-info (){ publish LOG info  "$*"; }
-warn (){ publish LOG warn  "$*"; }
-error(){ publish LOG error "$*"; }
-
+# Publish as: "level message"
+debug(){ publish LOG "debug $*"; }
+info (){ publish LOG "info  $*"; }
+warn (){ publish LOG "warn   $*"; }
+error(){ publish LOG "error  $*"; }
