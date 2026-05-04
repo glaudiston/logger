@@ -36,14 +36,14 @@ log_observer_stderr()
     # The event-driven lib passes: Topic, Hash, Timestamp, Payload...
     shift 3 # ignore topic, hash, and timestamp
     
-    local level="${1,,}"
-    shift # shift level out
-    local msg="$*"
-
+    local payload=( $1 )
+    local level="${payload[0],,}" # Lowercase the first element (the level)
+    local msg="${payload[@]:1}"    # Join the remaining elements as the message
+    
     local color=""
     [ "$level" == "error" ] && color="$TERM_COLOR_RED"
-
-    # Output: [level] message
+    
+    # Output: [LEVEL] message
     echo -e "[${color}${level^^}${TERM_COLOR_RESET}] $msg" >&2
     [ "$level" == "error" ] && backtrace >&2
 }
@@ -54,5 +54,5 @@ subscribe LOG log_observer_json_stderr
 # Publish as: "level message"
 debug(){ publish LOG "debug $*"; }
 info (){ publish LOG "info  $*"; }
-warn (){ publish LOG "warn   $*"; }
-error(){ publish LOG "error  $*"; }
+warn (){ publish LOG "warn  $*"; }
+error(){ publish LOG "error $*"; }
