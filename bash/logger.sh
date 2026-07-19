@@ -17,17 +17,17 @@ EOF
 
 log_observer_json_stderr()
 {
-    # The event-driven lib passes: Topic, Hash, Timestamp, Payload...
-    shift 3 # ignore topic, hash, and timestamp
-    
+	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
+	shift 3 # ignore topic, hash, and timestamp
+	
 	declare -a payload=( ${1,,} );
-    local level=${payload[0]} # First word of payload is the level
-    
-    local msg="${payload[@]:1}"
-    local TRACE=""
-    [ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
-    
-    jq -cn \
+	local level=${payload[0]} # First word of payload is the level
+	
+	local msg="${payload[@]:1}"
+	local TRACE=""
+	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
+	
+	jq -cn \
 	--arg level "$level" \
 	--arg msg "$msg" \
 	'{level:$level,"data":$msg'"$TRACE"'}' >&2
@@ -35,19 +35,19 @@ log_observer_json_stderr()
 
 log_observer_stderr()
 {
-    # The event-driven lib passes: Topic, Hash, Timestamp, Payload...
-    shift 3 # ignore topic, hash, and timestamp
-    
-    local payload=( $1 )
-    local level="${payload[0],,}" # Lowercase the first element (the level)
-    local msg="${payload[@]:1}"    # Join the remaining elements as the message
-    
-    local color=""
-    [ "$level" == "error" ] && color="$TERM_COLOR_RED"
-    
-    # Output: [LEVEL] message
-    echo -e "[${color}${level^^}${TERM_COLOR_RESET}] $msg" >&2
-    [ "$level" == "error" ] && backtrace >&2
+	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
+	shift 3 # ignore topic, hash, and timestamp
+	
+	local payload=( $1 )
+	local level="${payload[0],,}" # Lowercase the first element (the level)
+	local msg="${payload[@]:1}"    # Join the remaining elements as the message
+	
+	local color=""
+	[ "$level" == "error" ] && color="$TERM_COLOR_RED"
+	
+	# Output: [LEVEL] message
+	echo -e "[${color}${level^^}${TERM_COLOR_RESET}] $msg" >&2
+	[ "$level" == "error" ] && backtrace >&2
 }
 
 subscribe LOG log_observer_stderr
