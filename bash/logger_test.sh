@@ -40,7 +40,7 @@ assert_pattern() {
     local test_name="$1"
     local cmd="$2"
     local pattern="$3"
-    
+    set +e
     ((TOTAL++))
     
     # Capture both stdout and stderr
