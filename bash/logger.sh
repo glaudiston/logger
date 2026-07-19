@@ -2,16 +2,18 @@
 #
 # A event-driven logger coded in bash
 # depends on
-# github.com/glaudiston/pragma_once: allow avoid import overhead
+# github.com/glaudiston/pragma_once: avoid import overhead
 # github.com/glaudiston/event-driven: event pub-sub implementation
 # github.com/glaudiston/backtrace: stack-trace detection implementation
 # github.com/glaudiston/termsdk: ansi term code to TUI features like screen-buffers, cursor control, colors, etc.
 # https://github.com/jqlang/jq: jqlang allows encode/decode and query json
 
-. $(dirname $(realpath $BASH_SOURCE))/pragma_once/bash/pragma_once.sh || return 0
-. $(dirname $(realpath $BASH_SOURCE))/backtrace/bash/backtrace.sh
-. $(dirname $(realpath $BASH_SOURCE))/event-driven/bash/event.sh
-. $(dirname $(realpath $BASH_SOURCE))/termsdk/ansi_term_codes.sh
+. $(dirname $(realpath $BASH_SOURCE))/pragma_once/bash/import_bash.sh;
+import_bash <<-EOF
+	./backtrace/bash/backtrace.sh
+	./event-driven/bash/event.sh
+	./termsdk/ansi_term_codes.sh
+EOF
 
 log_observer_json_stderr()
 {
