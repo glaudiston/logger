@@ -40,8 +40,7 @@ assert_pattern() {
     local test_name="$1"
     local cmd="$2"
     local pattern="$3"
-    set +e
-    ((TOTAL++))
+    ((TOTAL++)) || :
     
     # Capture both stdout and stderr
     local output
@@ -49,12 +48,12 @@ assert_pattern() {
     
     if echo "$output" | grep -q "$pattern"; then
         printf "${GREEN}${CHECK_MARK}${NC} ${BOLD}%-30s${NC} [${GREEN}PASS${NC}]\n" "$test_name"
-        ((PASSED++))
+        ((PASSED++)) || :
     else
         printf "${RED}${CROSS_MARK}${NC} ${BOLD}%-30s${NC} [${RED}FAIL${NC}]\n" "$test_name"
         echo -e "    ${YELLOW}Expected pattern:${NC} $pattern"
         echo -e "    ${YELLOW}Actual output:${NC}    $output"
-        ((FAILED++))
+        ((FAILED++)) || :
     fi
 }
 
