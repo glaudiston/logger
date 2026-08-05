@@ -30,7 +30,8 @@ log_observer_json_file()
 	local TRACE=""
 	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
 	
-	local ts=$(date +%s%3N);
+	local ts;
+	ts=$(date +%s%3N);
 	jq -cn \
 	--arg level "$level" \
 	--arg msg "$msg" \
