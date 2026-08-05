@@ -47,11 +47,12 @@ log_observer_json_stderr()
 	local msg="${payload[@]:1}"
 	local TRACE=""
 	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
-	
+	local ts=$(date +%s%3N);
 	jq -cn \
 	--arg level "$level" \
 	--arg msg "$msg" \
-	'{level:$level,"data":$msg'"$TRACE"'}' >&2
+	--arg ts "$ts" \
+	'{"ts":$ts,"level":$level,"data":$msg'"$TRACE"'}' >&2
 }
 
 log_observer_stderr()
