@@ -15,6 +15,27 @@ import_bash <<-EOF
 	./termsdk/ansi_term_codes.sh
 EOF
 
+log_observer_json_file()
+{
+	if [[ ! -v LOG_FILE ]]; then
+		export LOG_FILE=./log.jsonl
+	fi;
+	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
+	shift 3 # ignore topic, hash, and timestamp
+	
+	declare -a payload=( ${1,,} );
+	local level=${payload[0]} # First word of payload is the level
+	
+	local msg="${payload[@]:1}";
+	local TRACE=""
+	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
+	
+	jq -cn \
+	--arg level "$level" \
+	--arg msg "$msg" \
+	'{level:$level,"data":$msg'"$TRACE"'}' >>"$LOG_FILE";
+}
+
 log_observer_json_stderr()
 {
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
@@ -50,11 +71,13 @@ log_observer_stderr()
 	[ "$level" == "error" ] && backtrace >&2
 }
 
-subscribe LOG log_observer_stderr
-subscribe LOG log_observer_json_stderr
+[[ ! -v LOG_MIME || $LOG_MIME == "term/plain" ]] && subscribe LOG log_observer_stderr
+[[ ! -v LOG_MIME || $LOG_MIME == "file/jsonl" ]] && subscribe LOG log_observer_json_file
+[[ $LOG_MIME == "term/jsonl" ]] && subscribe LOG log_observer_json_stderr
 
 # Publish as: "level message"
 debug(){ publish LOG "debug $*"; }
 info (){ publish LOG "info  $*"; }
 warn (){ publish LOG "warn  $*"; }
 error(){ publish LOG "error $*"; }
+
