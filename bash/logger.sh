@@ -23,8 +23,8 @@ log_observer_json_file()
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
 	shift 3 # ignore topic, hash, and timestamp
 	
-	declare -a payload=( ${1,,} );
-	local level=${payload[0]} # First word of payload is the level
+	declare -a payload=( ${1} );
+	local level=${payload[0],,} # First word of payload is the level
 	
 	local msg="${payload[@]:1}";
 	local TRACE=""
@@ -43,8 +43,8 @@ log_observer_json_stderr()
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
 	shift 3 # ignore topic, hash, and timestamp
 	
-	declare -a payload=( ${1,,} );
-	local level=${payload[0]} # First word of payload is the level
+	declare -a payload=( ${1} );
+	local level=${payload[0],,} # First word of payload is the level
 	
 	local msg="${payload[@]:1}"
 	local TRACE=""
