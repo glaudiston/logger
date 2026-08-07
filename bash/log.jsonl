@@ -1,0 +1,8 @@
+{"ts":"1786118480609","level":"debug","data":"test debug"}
+{"ts":"1786118480643","level":"info","data":"test info"}
+{"ts":"1786118480659","level":"warn","data":"test warn"}
+{"ts":"1786118480680","level":"error","data":"test error","stack":"backtrace:\nlogger.sh:31                   log_observer_json_file LOG d999202c585c56a055d68219ea63021f 1786118480663572601 error test error\nevent-driven/bash/event.sh:31  publish LOG error test error\nlogger.sh:86                   error test error\nlogger_test.sh:47              assert_pattern Error Level error \"test error\" [ERROR]\nlogger_test.sh:86              main \n"}
+{"ts":"1786118480694","level":"info","data":"json test"}
+{"ts":"1786118480710","level":"info","data":"json test"}
+{"ts":"1786118480742","level":"error","data":"critical","stack":"backtrace:\nlogger.sh:31                   log_observer_json_file LOG 023397c87fd594b108ca92078220733b 1786118480714600897 error critical\nevent-driven/bash/event.sh:31  publish LOG error critical\nlogger.sh:86                   error critical\nlogger_test.sh:47              assert_pattern JSON Stacktrace error \"critical\" \"stack\":\nlogger_test.sh:97              main \n"}
+{"ts":"1786118480820","level":"error","data":"critical","stack":"backtrace:\nlogger.sh:31                   log_observer_json_file LOG f9e9eb0624ff5ae4680eb198d992d235 1786118480755112456 error critical\nevent-driven/bash/event.sh:31  publish LOG error critical\nlogger.sh:86                   error critical\nlogger_test.sh:47              assert_pattern Stderr Backtrace error \"critical\" backtrace\nlogger_test.sh:98              main \n"}

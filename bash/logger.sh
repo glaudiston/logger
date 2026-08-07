@@ -8,7 +8,7 @@
 # github.com/glaudiston/termsdk: ansi term code to TUI features like screen-buffers, cursor control, colors, etc.
 # https://github.com/jqlang/jq: jqlang allows encode/decode and query json
 
-. $(dirname $(realpath $BASH_SOURCE))/pragma_once/bash/import_bash.sh;
+. "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/pragma_once/bash/import_bash.sh";
 import_bash <<-EOF
 	./backtrace/bash/backtrace.sh
 	./event-driven/bash/event.sh
@@ -77,7 +77,7 @@ log_observer_stderr()
 
 [[ ! -v LOG_MIME || $LOG_MIME == "term/plain" ]] && subscribe LOG log_observer_stderr
 [[ ! -v LOG_MIME || $LOG_MIME == "file/jsonl" ]] && subscribe LOG log_observer_json_file
-[[ $LOG_MIME == "term/jsonl" ]] && subscribe LOG log_observer_json_stderr
+[[ -v LOG_MIME && $LOG_MIME == "term/jsonl" ]] && subscribe LOG log_observer_json_stderr
 
 # Publish as: "level message"
 debug(){ publish LOG "debug $*"; }
