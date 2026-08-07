@@ -42,6 +42,8 @@ To clone the project along with all its dependencies in one command, use:
 ```bash
 git clone --recursive https://github.com/glaudiston/logger.git
 cd logger
+# optionally set the hook to ensure your changes are tested before commit
+git config core.hooksPath .githooks
 ```
 
 **Already cloned the repo without `--recursive`?**  

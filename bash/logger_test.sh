@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 
 # --- Setup ---
-LOGGER_PATH="$(dirname "$(realpath "$BASH_SOURCE")")/logger.sh"
-if [[ -f "$LOGGER_PATH" ]]; then
-    . "$LOGGER_PATH"
-else
-    echo "❌ Error: logger.sh not found at $LOGGER_PATH"
-    exit 1
-fi
+. "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/logger.sh";
 
 # --- UI Colors & Symbols ---
 BOLD='\033[1m'
@@ -78,13 +72,18 @@ print_summary() {
 
 print_banner
 
+# default terminal behavior
 echo -e "\n${BOLD}1. Basic Log Level Routing${NC}"
 echo -e "${CYAN}----------------------------------------------------${NC}"
 assert_pattern "Debug Level"  'debug "test debug"'  "[DEBUG]"
 assert_pattern "Info Level"     'info  "test info"'   "[INFO]"
 assert_pattern "Warn Level"     'warn  "test warn"'    "[WARN]"
 assert_pattern "Error Level"    'error "test error"'  "[ERROR]"
+unsubscribe LOG log_observer_stderr
+unsubscribe LOG log_observer_file
 
+# JSON to the terminal
+subscribe LOG log_observer_json_stderr
 echo -e "\n${BOLD}2. JSON Output Validation${NC}"
 echo -e "${CYAN}----------------------------------------------------${NC}"
 # Testing if the JSON observer correctly encodes the payload
