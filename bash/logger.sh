@@ -9,6 +9,7 @@
 # https://github.com/jqlang/jq: jqlang allows encode/decode and query json
 
 . "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/pragma_once/bash/import_bash.sh";
+# shellcheck disable=SC2119
 import_bash <<-EOF
 	./backtrace/bash/backtrace.sh
 	./event-driven/bash/event.sh
