@@ -24,10 +24,12 @@ log_observer_json_file()
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
 	shift 3 # ignore topic, hash, and timestamp
 	
-	declare -a payload=( ${1} );
-	local level=${payload[0],,} # First word of payload is the level
+	local payload=$*;
+	local level=${payload/ */} # First word of payload is the level
 	
-	local msg="${payload[@]:1}";
+	local msg=${payload/$level /};
+	msg=${msg#"${msg%%[![:space:]]*}"}; # left trim
+	msg=${msg%"${msg##*[![:space:]]}"} # right trim
 	local TRACE=""
 	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
 	
@@ -45,13 +47,16 @@ log_observer_json_stderr()
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
 	shift 3 # ignore topic, hash, and timestamp
 	
-	declare -a payload=( ${1} );
-	local level=${payload[0],,} # First word of payload is the level
+	local payload=$*;
+	local level=${payload/ */} # First word of payload is the level
 	
-	local msg="${payload[@]:1}"
+	local msg="${payload/$level /}"
+	msg=${msg#"${msg%%[![:space:]]*}"}; # left trim
+	msg=${msg%"${msg##*[![:space:]]}"} # right trim
 	local TRACE=""
 	[ "$level" == "error" ] && TRACE=", \"stack\": $(backtrace | jq -Rs)";
-	local ts=$(date +%s%3N);
+	local ts;
+	ts=$(date +%s%3N);
 	jq -cn \
 	--arg level "$level" \
 	--arg msg "$msg" \
@@ -64,9 +69,14 @@ log_observer_stderr()
 	# The event-driven lib passes: Topic, Hash, Timestamp, Payload...
 	shift 3 # ignore topic, hash, and timestamp
 	
-	local payload=( $1 )
-	local level="${payload[0],,}" # Lowercase the first element (the level)
-	local msg="${payload[@]:1}"    # Join the remaining elements as the message
+	local _IFS="$IFS";
+	IFS=" ";
+	local payload="$1";
+	IFS="_IFS"; unset _IFS;
+	local level="${payload/ */}"	# Lowercase the first element (the level)
+	local msg="${payload/$level /}"		# Join the remaining elements as the message
+	msg=${msg#"${msg%%[![:space:]]*}"}; # left trim
+	msg=${msg%"${msg##*[![:space:]]}"} # right trim
 	
 	local color=""
 	[ "$level" == "error" ] && color="$TERM_COLOR_RED"
